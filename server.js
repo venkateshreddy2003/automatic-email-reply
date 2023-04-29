@@ -20,7 +20,7 @@ const gmail = google.gmail({
   auth: oAuth2Client,
 });
 
-const checkForNewMessages = () => {
+const emailReply = () => {
   // get message details
   // The userId parameter is set to "me" to indicate that the authenticated user's mailbox is being queried,
   // and the q parameter is set to "is:unread" to filter
@@ -192,11 +192,7 @@ const checkForNewMessages = () => {
 };
 
 //interval of the function call
-setInterval(checkForNewMessages, 10000);
-
-// app.get("/", async (req, res) => {
-//   res.send("Gmail Replier");
-// });
+setInterval(emailReply, 10000);
 
 app.listen(process.env.PORT, () => {
   console.log("listening on port " + process.env.PORT);
