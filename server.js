@@ -66,7 +66,7 @@ const emailReply = () => {
                 msg.payload.headers.find(
                   (header) =>
                     header.name === "From" &&
-                    header.value.includes("venkateshreddy2003@gmail.com")
+                    header.value.includes("venkateshreddypitchala@gmail.com")
                 )
             )
           ) {
@@ -83,7 +83,7 @@ const emailReply = () => {
               service: "gmail",
               auth: {
                 type: "OAuth2",
-                user: "venkateshreddy2003@gmail.com",
+                user: "venkateshreddypitchala@gmail.com",
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET,
                 refreshToken: process.env.REFRESH_TOKEN,
@@ -92,7 +92,7 @@ const emailReply = () => {
             });
 
             const mailOptions = {
-              from: "venkateshreddy2003@gmail.com",
+              from: "venkateshreddypitchala@gmail.com",
               to: messageDetails.data.payload.headers.find(
                 (header) => header.name === "From"
               ).value,
@@ -207,7 +207,7 @@ const emailReply = () => {
 //interval of the function call
 const randomNumber = getRndInteger(45, 120);
 console.log("Random interval is " + " " + randomNumber);
-setInterval(emailReply, randomNumber * 1000);
+setInterval(emailReply, 10 * 1000);
 
 app.listen(process.env.PORT, () => {
   console.log("listening on port " + process.env.PORT);
