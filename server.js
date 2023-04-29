@@ -4,7 +4,10 @@ const { OAuth2 } = google.auth;
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 const app = express();
-// Auth details
+// Auth details for creating a oauth2 client
+const getRndInteger = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 const oAuth2Client = new OAuth2(
   process.env.CLIENT_ID,
   process.env.CLIENT_SECRET,
@@ -19,7 +22,8 @@ const gmail = google.gmail({
   version: "v1",
   auth: oAuth2Client,
 });
-
+// This function identifies the unread messages in the mail box and and gets them and verify it is a thread and we have not replied to it previously
+// Then only the function replies with the message "Sent Using node js using google apis for gmail iam in vacation"
 const emailReply = () => {
   // get message details
   // The userId parameter is set to "me" to indicate that the authenticated user's mailbox is being queried,
@@ -31,10 +35,13 @@ const emailReply = () => {
       q: `is:unread`,
     },
     async (err, res) => {
-      if (err) return console.log("The API returned an error: " + err);
-
+      if (err) {
+        console.log("error: " + err);
+        return;
+      }
+      // getb the messages from the response
       const messages = res.data.messages;
-
+      // it works when there is a new unread message
       if (messages?.length) {
         console.log("New message received!");
 
@@ -45,11 +52,13 @@ const emailReply = () => {
             id: message.id,
           });
           const threadId = messageDetails.data.threadId;
+          // getting details of thread using the message id
           const threadDetails = await gmail.users.threads.get({
             userId: "me",
             id: threadId,
           });
-
+          // if we had not send any mail then it works and checks whether SENT label is in the message
+          // because if it is present then we have already replied
           if (
             !threadDetails.data.messages.some(
               (msg) =>
@@ -92,9 +101,9 @@ const emailReply = () => {
                 messageDetails.data.payload.headers.find(
                   (header) => header.name === "Subject"
                 ).value,
-              text: "Sent Using node js using google apis for gmail iam in vacation",
+              text: "Sent Using node js and google apis for gmail iam in vacation i will message you again when iam available",
             };
-
+            // sending the mail using nodemailer
             transporter.sendMail(mailOptions, async (err, info) => {
               if (err) {
                 console.log(err);
@@ -126,6 +135,7 @@ const emailReply = () => {
                         labelFound = true;
                       }
                     });
+                    // if label does not exists create new one
                     if (!labelFound) {
                       gmail.users.labels
                         .create({
@@ -138,6 +148,7 @@ const emailReply = () => {
                         })
                         .then((res) => {
                           console.log(`"${labelName}" label created`, res);
+                          // adding message to the label
                           gmail.users.threads
                             .modify({
                               userId: "me",
@@ -178,7 +189,9 @@ const emailReply = () => {
                   });
               }
             });
-          } else {
+          }
+          // email threads that has our previous reply
+          else {
             console.log(
               `Email thread with thread ID ${threadId} already has a reply from you.`
             );
@@ -192,7 +205,9 @@ const emailReply = () => {
 };
 
 //interval of the function call
-setInterval(emailReply, 10000);
+const randomNumber = getRndInteger(45, 120);
+console.log("Random interval is " + " " + randomNumber);
+setInterval(emailReply, randomNumber * 1000);
 
 app.listen(process.env.PORT, () => {
   console.log("listening on port " + process.env.PORT);
