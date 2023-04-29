@@ -92,7 +92,7 @@ const checkForNewMessages = () => {
                 messageDetails.data.payload.headers.find(
                   (header) => header.name === "Subject"
                 ).value,
-              text: "Thank you for your message. I will respond as soon as I am available",
+              text: "Sent Using node js using google apis for gmail iam in vacation",
             };
 
             transporter.sendMail(mailOptions, async (err, info) => {
@@ -106,7 +106,7 @@ const checkForNewMessages = () => {
                     ).value
                   }: ${info.response}`
                 );
-                const labelName = "Replied";
+                const labelName = "automatic-replying";
 
                 // Check if label exists
                 let label = null;
@@ -147,7 +147,7 @@ const checkForNewMessages = () => {
                               },
                             })
                             .then((res) => {
-                              console.log(`"Replied" label added`, res);
+                              console.log(`"" label added`, res);
                             })
                             .catch((err) => {
                               console.log("couldn't add label", err);
@@ -166,7 +166,7 @@ const checkForNewMessages = () => {
                           },
                         })
                         .then((res) => {
-                          console.log(`"Replied" label added`, res);
+                          console.log(`"automatic-replying" label added`, res);
                         })
                         .catch((err) => {
                           console.log("couldn't add label", err);
