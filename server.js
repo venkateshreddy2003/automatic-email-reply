@@ -43,7 +43,7 @@ const emailReply = () => {
       const messages = res.data.messages;
       // it works when there is a new unread message
       if (messages?.length) {
-        console.log("New message received!");
+        console.log("New message are there");
 
         //checking if message unread
         for (const message of messages) {
@@ -51,14 +51,14 @@ const emailReply = () => {
             userId: "me",
             id: message.id,
           });
-          console.log(messageDetails);
+          // console.log(messageDetails);
           const threadId = messageDetails.data.threadId;
           // getting details of thread using the message id
           const threadDetails = await gmail.users.threads.get({
             userId: "me",
             id: threadId,
           });
-          console.log(threadDetails);
+          // console.log(threadDetails);
           // if we had not send any mail then it works and checks whether SENT label is in the message
           // because if it is present then we have already replied
           if (
@@ -155,7 +155,7 @@ const emailReply = () => {
                               },
                             })
                             .then((res) => {
-                              console.log(`"" label added`, res);
+                              console.log(`"automatic-replying" label added`);
                             })
                             .catch((err) => {
                               console.log("couldn't add label", err);
@@ -175,7 +175,7 @@ const emailReply = () => {
                           },
                         })
                         .then((res) => {
-                          console.log(`"automatic-replying" label added`, res);
+                          console.log(`"automatic-replying" label added`);
                         })
                         .catch((err) => {
                           console.log("couldn't add label", err);
