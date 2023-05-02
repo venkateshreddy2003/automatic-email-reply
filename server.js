@@ -51,23 +51,23 @@ const emailReply = () => {
             userId: "me",
             id: message.id,
           });
+          console.log(messageDetails);
           const threadId = messageDetails.data.threadId;
           // getting details of thread using the message id
           const threadDetails = await gmail.users.threads.get({
             userId: "me",
             id: threadId,
           });
+          console.log(threadDetails);
           // if we had not send any mail then it works and checks whether SENT label is in the message
           // because if it is present then we have already replied
           if (
-            !threadDetails.data.messages.some(
-              (msg) =>
-                msg.labelIds.includes("SENT") &&
-                msg.payload.headers.find(
-                  (header) =>
-                    header.name === "From" &&
-                    header.value.includes("venkateshreddypitchala@gmail.com")
-                )
+            !threadDetails.data.messages.some((msg) =>
+              msg.payload.headers.find(
+                (header) =>
+                  header.name === "From" &&
+                  header.value.includes("bloguser.2003@gmail.com")
+              )
             )
           ) {
             console.log(
@@ -83,19 +83,19 @@ const emailReply = () => {
               service: "gmail",
               auth: {
                 type: "OAuth2",
-                user: "venkateshreddypitchala@gmail.com",
+                user: "bloguser.2003@gmail.com",
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET,
                 refreshToken: process.env.REFRESH_TOKEN,
                 accessToken: oAuth2Client.getAccessToken(),
               },
             });
-
+            const fromMail = messageDetails.data.payload.headers.find(
+              (header) => header.name === "From"
+            ).value;
             const mailOptions = {
-              from: "venkateshreddypitchala@gmail.com",
-              to: messageDetails.data.payload.headers.find(
-                (header) => header.name === "From"
-              ).value,
+              from: "bloguser.2003@gmail.com",
+              to: fromMail,
               subject:
                 "Re: " +
                 messageDetails.data.payload.headers.find(
@@ -109,11 +109,7 @@ const emailReply = () => {
                 console.log(err);
               } else {
                 console.log(
-                  `Automatic response sent to ${
-                    messageDetails.data.payload.headers.find(
-                      (header) => header.name === "From"
-                    ).value
-                  }: ${info.response}`
+                  `Automatic response sent to ${fromMail}: ${info.response}`
                 );
                 const labelName = "automatic-replying";
 
@@ -155,6 +151,7 @@ const emailReply = () => {
                               id: threadId,
                               resource: {
                                 addLabelIds: [label.id],
+                                removeLabelIds: ["UNREAD"],
                               },
                             })
                             .then((res) => {
@@ -174,6 +171,7 @@ const emailReply = () => {
                           id: threadId,
                           resource: {
                             addLabelIds: [label.id],
+                            removeLabelIds: ["UNREAD"],
                           },
                         })
                         .then((res) => {
@@ -195,6 +193,23 @@ const emailReply = () => {
             console.log(
               `Email thread with thread ID ${threadId} already has a reply from you.`
             );
+            gmail.users.threads
+              .modify({
+                userId: "me",
+                id: threadId,
+                resource: {
+                  removeLabelIds: ["UNREAD"],
+                },
+              })
+              .then((res) => {
+                console.log(
+                  `un read label removed for threads which has already reply from you`,
+                  res
+                );
+              })
+              .catch((err) => {
+                console.log("couldn't remove unread label", err);
+              });
           }
         }
       } else {
@@ -207,7 +222,7 @@ const emailReply = () => {
 //interval of the function call
 const randomNumber = getRndInteger(45, 120);
 console.log("Random interval is " + " " + randomNumber);
-setInterval(emailReply, 10 * 1000);
+setInterval(emailReply, 5 * 1000);
 
 app.listen(process.env.PORT, () => {
   console.log("listening on port " + process.env.PORT);
