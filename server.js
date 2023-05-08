@@ -59,8 +59,9 @@ const emailReply = () => {
             id: threadId,
           });
           // console.log(threadDetails);
-          // if we had not send any mail then it works and checks whether SENT label is in the message
-          // because if it is present then we have already replied
+          // checks whether the thread has a previous reply from us or not
+          // if reply is there it doesn't send the message
+          // if reply is not there we will send the message
           if (
             !threadDetails.data.messages.some((msg) =>
               msg.payload.headers.find(
