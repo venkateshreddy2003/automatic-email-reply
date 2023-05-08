@@ -39,7 +39,7 @@ const emailReply = () => {
         console.log("error: " + err);
         return;
       }
-      // getb the messages from the response
+      // get the messages from the response
       const messages = res.data.messages;
       // it works when there is a new unread message
       if (messages?.length) {
