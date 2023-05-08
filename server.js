@@ -143,7 +143,7 @@ const emailReply = () => {
                           },
                         })
                         .then((res) => {
-                          console.log(`"${labelName}" label created`, res);
+                          console.log(`"${labelName}" label created`);
                           // adding message to the label
                           gmail.users.threads
                             .modify({
@@ -203,8 +203,7 @@ const emailReply = () => {
               })
               .then((res) => {
                 console.log(
-                  `un read label removed for threads which has already reply from you`,
-                  res
+                  `un read label removed for threads which has already reply from you`
                 );
               })
               .catch((err) => {
